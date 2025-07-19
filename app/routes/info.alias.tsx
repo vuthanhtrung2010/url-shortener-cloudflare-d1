@@ -22,8 +22,7 @@ export default function InfoPage({ loaderData }: Route.ComponentProps) {
   const { link } = loaderData;
   const href = `/${link.alias}`;
   
-  // Format the timestamp
-  const createdAt = new Date(link.createdAt * 1000).toLocaleString();
+  const createdAt = new Date(link.createdAt).toLocaleString();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-backgroundColor">
