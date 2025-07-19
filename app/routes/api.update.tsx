@@ -9,7 +9,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const url = formData.get("url") as string;
 
   // Check password using Argon2 hash verification
-  const passwordHash = context.cloudflare.env.ADMIN_PASSWORD_HASH;
+  const passwordHash = process.env.PASSWORD_HASH;
   if (!passwordHash || !(await verifyPassword(passwordHash, password))) {
     return Response.json(
       { success: false, message: "Invalid password." },
