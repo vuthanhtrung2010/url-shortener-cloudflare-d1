@@ -1,15 +1,183 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-accent: #DC3962;
+  --color-backgroundAccent: #1E2029;
+  --color-backgroundAccentLighter: #22242d;
+  --color-backgroundColor: #12141D;
+  --color-lightAccent: #FF715B;
+  --color-primaryText: #FFFFFF;
+  --color-secondaryText: #6B8594;
+  
+  --radius: 0.25rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-link: 12px;
+  --radius-website: 10px;
+  --radius-full: 9999px;
+  --radius-none: 0;
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+@font-face {
+  font-family: "Leckerli One";
+  src: url("./fonts/LeckerliOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+html, body {
+  background-color: #12141d;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+#root {
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.footer-container,
+.bottom-right {
+  position: fixed;
+  right: 20px;
+  text-align: right;
+  z-index: 1000;
+}
+
+.footer-container { bottom: 20px; }
+.bottom-right       { bottom: 40px; }
+
+.credit,
+.space-y-0 {
+  color: #fff;
+}
+
+.credit {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+.credit a {
+  text-decoration: underline;
+}
+
+.credit a:hover {
+  text-decoration: none;
+}
+
+.space-y-0 p {
+  color: #ccc;
+  font-size: .9em;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Scroll Bar */
+body::-webkit-scrollbar {
+  width: 16px;
+  background-color: #333;
+}
+body::-webkit-scrollbar-track {
+  border-radius: 8px;
+}
+body::-webkit-scrollbar-thumb {
+  height: 56px;
+  border-radius: 10px;
+  border: 4px solid transparent;
+  background-clip: content-box;
+  background-color: #888;
+}
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Custom input styling */
+.form-input {
+  --width-of-input: 100%;
+  position: relative;
+  margin: 20px 0 40px;
+  width: var(--width-of-input);
+}
+.form-input input {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #fff;
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  font-size: 18px;
+  color: #fff;
+}
+.form-input input:focus,
+.form-input input:valid {
+  outline: 0;
+  border-bottom-color: lightblue;
+}
+.form-input label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  pointer-events: none;
+}
+.form-input label span {
+  display: inline-block;
+  font-size: 18px;
+  min-width: 5px;
+  color: #fff;
+  transition: .3s cubic-bezier(.68,-.55,.265,1.55);
+}
+.form-input input:focus + label span,
+.form-input input:valid + label span {
+  color: lightblue;
+  transform: translateY(-30px);
+}
+
+/* Star button */
+.star-button {
+  position: relative;
+  padding: 12px 35px;
+  background: #fec195;
+  font-size: 17px;
+  font-weight: 500;
+  color: #181818;
+  border: 3px solid #fec195;
+  border-radius: 8px;
+  box-shadow: 0 0 0 #fec1958c;
+  transition: .3s ease-in-out;
+  cursor: pointer;
+}
+
+.star-button [class^="star-"] {
+  position: absolute;
+  filter: drop-shadow(0 0 0 #fffdef);
+  z-index: -5;
+}
+.star-1 { top: 20%; left: 20%; width: 25px; height: auto; transition: 1s cubic-bezier(.05,.83,.43,.96); }
+.star-2 { top: 45%; left: 45%; width: 15px; height: auto; transition: 1s cubic-bezier(0,.4,0,1.01); }
+.star-3 { top: 40%; left: 40%; width: 5px;  height: auto; transition: 1s cubic-bezier(0,.4,0,1.01); }
+.star-4 { top: 20%; left: 40%; width: 8px;  height: auto; transition: .8s cubic-bezier(0,.4,0,1.01); }
+.star-5 { top: 25%; left: 45%; width: 15px; height: auto; transition: .6s cubic-bezier(0,.4,0,1.01); }
+.star-6 { top: 5%;  left: 50%; width: 5px;  height: auto; transition: .8s ease; }
+
+.star-button:hover {
+  background: transparent;
+  color: #fec195;
+  box-shadow: 0 0 25px #fec1958c;
+}
+.star-button:hover .star-1 { top: -80%; left: -30%; width: 25px; height: auto; filter: drop-shadow(0 0 10px #fffdef); z-index: 2; }
+.star-button:hover .star-2 { top: -25%; left: 10%;  width: 15px; height: auto; filter: drop-shadow(0 0 10px #fffdef); z-index: 2; }
+.star-button:hover .star-3 { top: 55%;  left: 25%;  width: 5px;  height: auto; filter: drop-shadow(0 0 10px #fffdef); z-index: 2; }
+.star-button:hover .star-4 { top: 30%;  left: 80%;  width: 8px;  height: auto; filter: drop-shadow(0 0 10px #fffdef); z-index: 2; }
+.star-button:hover .star-5 { top: 25%;  left: 115%; width: 15px; height: auto; filter: drop-shadow(0 0 10px #fffdef); z-index: 2; }
+.star-button:hover .star-6 { top: 5%;   left: 60%;  width: 5px;  height: auto; filter: drop-shadow(0 0 10px #fffdef); z-index: 2; }
+
+.fil0 {
+  fill: #fffdef;
 }

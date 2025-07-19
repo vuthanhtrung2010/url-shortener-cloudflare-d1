@@ -4,13 +4,13 @@
   "compatibility_date": "2025-04-04",
   "main": "./workers/app.ts",
   "vars": {
-    "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
+    "ADMIN_PASSWORD_HASH": "pbkdf2:100000:Ja8UT92sIhWOn2zj1WEnx/incSXk6dH6iBcvFzZf/0nf9Zx772NWcLR7NItc4wFKoyp0sbA9KWjQE68TH45k+w=="
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "your-database-name",
-      "database_id": "your-database-id",
+      "database_name": "url-shortener",
+      "database_id": "8275db82-47e9-4a19-855a-5d55c6c06eb3",
       "migrations_dir": "drizzle"
     }
   ]
