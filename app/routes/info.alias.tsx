@@ -1,4 +1,5 @@
 import { redirect } from "react-router";
+import { Link } from "react-router";
 import { getData } from "~/lib/data";
 import type { Route } from "./+types/info.alias";
 
@@ -32,10 +33,10 @@ export default function InfoPage({ loaderData }: Route.ComponentProps) {
         </header>
         <p className="mb-2">
           <span className="font-semibold">Path</span>:
-          <a className="text-blue-500 hover:text-blue-600" href={href}>
+          <Link className="text-blue-500 hover:text-blue-600" to={href}>
             {" "}
             /{link.alias}
-          </a>
+          </Link>
         </p>
         <p className="mb-2">
           <span className="font-semibold">Redirect</span>:
@@ -50,12 +51,12 @@ export default function InfoPage({ loaderData }: Route.ComponentProps) {
         <p className="mb-6">
           <span className="font-semibold">Hits</span>: {link.hits}
         </p>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors"
         >
           Go Home
-        </a>
+        </Link>
       </div>
     </div>
   );
