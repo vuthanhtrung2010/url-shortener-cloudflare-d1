@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 interface Props {
   readonly title: string;
   readonly target: string;
@@ -7,8 +9,8 @@ interface Props {
 
 export function MainPage({ title, target, description, icon }: Props) {
   return (
-    <a
-      href={target}
+    <Link
+      to={target}
       className="bg-backgroundAccent my-1 h-24 text-primaryText flex-row flex rounded-link hover:bg-backgroundAccentLighter mx-auto sm:mx-auto md:mx-0"
     >
       <div className="py-2 px-2 md:flex">
@@ -28,6 +30,6 @@ export function MainPage({ title, target, description, icon }: Props) {
           {description}
         </span>
       </div>
-    </a>
+    </Link>
   );
 }
