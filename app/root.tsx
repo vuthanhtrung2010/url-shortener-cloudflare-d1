@@ -10,6 +10,44 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+export function meta() {
+  return [
+    { title: "Trung's URL Shortener" },
+    { 
+      name: "description", 
+      content: "Trung's URL Shortener" 
+    },
+    {
+      property: "og:title",
+      content: "Vũ Thành Trung"
+    },
+    {
+      property: "og:description", 
+      content: "Trung's URL Shortener"
+    },
+    {
+      property: "og:image",
+      content: "/assets/meta/banner.webp"
+    },
+    {
+      name: "twitter:title",
+      content: "Vũ Thành Trung"
+    },
+    {
+      name: "twitter:card",
+      content: "summary_large_image"
+    },
+    {
+      name: "twitter:description",
+      content: "A website which displays my Spotify status."
+    },
+    {
+      name: "twitter:image",
+      content: "/assets/meta/banner.webp"
+    },
+  ];
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -21,6 +59,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <div className="footer-container">
+          <div className="credit" id="credit">
+            Made by <a href="https://discord.gg/TR8k3MtjNZ">Vũ Thành Trung</a> |{" "}
+            <a href="https://github.com/vuthanhtrung2010/url-shortener">
+              Github
+            </a>
+          </div>
+          <div className="space-y-0">
+            <p>&copy; 2025 Trung - All Rights Reserved.</p>
+          </div>
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
