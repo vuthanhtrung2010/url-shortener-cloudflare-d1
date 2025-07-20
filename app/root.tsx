@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
-export function meta() {
+export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
   return [
     { title: "Trung's URL Shortener" },
     { 
