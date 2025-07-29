@@ -27,7 +27,7 @@ export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
     },
     {
       property: "og:image",
-      content: "/assets/meta/banner.webp"
+      content: "https://img.trunghsgs.edu.vn/banner.webp"
     },
     {
       name: "twitter:title",
@@ -43,7 +43,7 @@ export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
     },
     {
       name: "twitter:image",
-      content: "/assets/meta/banner.webp"
+      content: "https://img.trunghsgs.edu.vn/banner.webp"
     },
   ];
 }
