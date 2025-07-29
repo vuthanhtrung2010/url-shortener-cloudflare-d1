@@ -1,5 +1,4 @@
-import { redirect } from "react-router";
-import { Link } from "react-router";
+import { redirect, Link } from "react-router";
 import { getData } from "~/lib/data";
 import type { Route } from "./+types/info.alias";
 
@@ -39,10 +38,10 @@ export default function InfoPage({ loaderData }: Route.ComponentProps) {
         </p>
         <p className="mb-2">
           <span className="font-semibold">Redirect</span>:
-          <a className="text-blue-500 hover:text-blue-600" href={link.link}>
+          <Link className="text-blue-500 hover:text-blue-600" to={link.link}>
             {" "}
             {link.link}
-          </a>
+          </Link>
         </p>
         <p className="mb-2">
           <span className="font-semibold">Created</span>: {createdAt}

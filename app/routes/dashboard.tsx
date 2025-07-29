@@ -11,7 +11,6 @@ import { PasswordForm } from "~/components/Forms/password-form";
 import { RedirectPathForm } from "~/components/Forms/redirect-path-form";
 import { RedirectURLForm } from "~/components/Forms/redirect-url-form";
 import { ErrorToast } from "~/components/Toasts/error";
-import type { Route } from "./+types/dashboard";
 
 interface ApiResponse {
   success: boolean;

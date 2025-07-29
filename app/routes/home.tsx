@@ -1,17 +1,16 @@
-import * as schema from "~/database/schema";
 import { MainPage } from "~/components/main-page";
 import { DATA } from "~/lib/config";
 
 import type { Route } from "./+types/home";
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_: Route.MetaArgs) {
   return [
     { title: "URL Shortener - Trung" },
     { name: "description", content: "Personal URL shortener by Trung" },
   ];
 }
 
-export default function Home({}: Route.ComponentProps) {
+export default function Home(props: Route.ComponentProps) {
   return (
     <div className="min-h-screen flex flex-col bg-backgroundColor">
       <section
@@ -23,7 +22,7 @@ export default function Home({}: Route.ComponentProps) {
           <img
             className="rounded-full"
             src={DATA.profilePicture}
-            alt="Profile Picture"
+            alt={DATA.name}
             width={128}
             height={128}
           />

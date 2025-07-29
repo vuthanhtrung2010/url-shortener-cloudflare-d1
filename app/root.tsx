@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
-export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
+export function meta(_args: Route.MetaArgs): Route.MetaDescriptors {
   return [
     { title: "Trung's URL Shortener" },
     { 
@@ -48,7 +48,7 @@ export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
   ];
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
