@@ -271,24 +271,41 @@ export async function getUserByUsername(
 }
 
 /**
- * Verify user credentials
+ * Get user by email
+ */
+export async function getUserByEmail(
+  db: DrizzleD1Database<typeof schema>,
+  email: string
+) {
+  try {
+    return await db.query.users.findFirst({
+      where: eq(schema.users.email, email)
+    });
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null;
+  }
+}
+
+/**
+ * Verify user credentials using email
  */
 export async function verifyUser(
   db: DrizzleD1Database<typeof schema>,
-  username: string,
+  email: string,
   password: string
 ): Promise<{ success: boolean; user?: any; message?: string }> {
   try {
-    const user = await getUserByUsername(db, username);
+    const user = await getUserByEmail(db, email);
     
     if (!user) {
-      return { success: false, message: "Invalid username or password" };
+      return { success: false, message: "Invalid email or password" };
     }
 
     const isValidPassword = await verifyPassword(user.password, password);
     
     if (!isValidPassword) {
-      return { success: false, message: "Invalid username or password" };
+      return { success: false, message: "Invalid email or password" };
     }
 
     // Don't return password hash

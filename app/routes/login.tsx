@@ -34,7 +34,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 
 export async function action({ request, context }: Route.ActionArgs) {
   const formData = await request.formData();
-  const username = formData.get("username") as string;
+  const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const turnstileToken = formData.get("cf-turnstile-response") as string;
 
@@ -47,11 +47,11 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 
   // Verify credentials
-  const result = await verifyUser(context.db, username, password);
+  const result = await verifyUser(context.db, email, password);
 
   if (!result.success || !result.user) {
     return {
-      error: result.message || "Invalid username or password",
+      error: result.message || "Invalid email or password",
     };
   }
 
@@ -110,12 +110,12 @@ export default function LoginPage() {
                 )}
 
                 <div className="grid gap-2">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    id="username"
-                    name="username"
-                    type="text"
-                    placeholder="Enter your username"
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
                     required
                     disabled={isSubmitting}
                   />
