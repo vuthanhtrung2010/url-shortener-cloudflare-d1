@@ -1,20 +1,19 @@
 import { deleteRedirect } from "~/lib/data";
-import { verifyPassword } from "~/lib/password";
+import { getUserFromSession } from "~/lib/auth";
 import type { Route } from "./+types/api.delete";
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const formData = await request.formData();
-  const password = formData.get("password") as string;
-  const alias = formData.get("alias") as string;
-
-  // Check password using Argon2 hash verification
-  const passwordHash = process.env.PASSWORD_HASH;
-  if (!passwordHash || !(await verifyPassword(passwordHash, password))) {
+  // Check authentication
+  const user = await getUserFromSession(request);
+  if (!user) {
     return Response.json(
-      { success: false, message: "Invalid password." },
+      { success: false, message: "Authentication required" },
       { status: 401 }
     );
   }
+
+  const formData = await request.formData();
+  const alias = formData.get("alias") as string;
 
   const mapped_alias: string[] = alias
     .split(" ")

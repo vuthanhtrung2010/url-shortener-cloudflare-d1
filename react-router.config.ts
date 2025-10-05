@@ -6,6 +6,6 @@ export default {
     unstable_viteEnvironmentApi: true,
   },
   async prerender() {
-    return ["/", "/dashboard"];
+    return ["/"];
   },
 } satisfies Config;

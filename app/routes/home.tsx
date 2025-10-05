@@ -100,6 +100,23 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 pb-8">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="bg-backgroundAccent/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
+            <div className="text-secondaryText mb-2">
+              Made by <a href="https://discord.gg/TR8k3MtjNZ" className="text-accent hover:text-lightAccent transition-colors">Vũ Thành Trung</a> |{" "}
+              <a href="https://github.com/vuthanhtrung2010/url-shortener" className="text-accent hover:text-lightAccent transition-colors">
+                Github
+              </a>
+            </div>
+            <div className="text-secondaryText text-sm">
+              <p>&copy; 2025 Trung - All Rights Reserved.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

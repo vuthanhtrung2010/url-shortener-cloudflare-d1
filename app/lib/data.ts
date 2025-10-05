@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { isURL } from "validator";
 import * as schema from "../../database/schema";
+import { hashPassword, verifyPassword } from "./password";
 
 // Cache for storing frequently accessed data
 export const cache = new Map<string, any>();
@@ -48,6 +49,7 @@ export async function createRedirect(
   db: DrizzleD1Database<typeof schema>,
   url: string,
   aliases: string[],
+  userId?: number
 ): Promise<number> {
   try {
     console.log(`Requested creating ${url} with aliases ${aliases.join(", ")}.`);
@@ -70,6 +72,7 @@ export async function createRedirect(
         const result = await db.insert(schema.links).values({
           link: url,
           alias,
+          userId: userId || null,
           hits: 0,
         }).returning();
         
@@ -187,4 +190,139 @@ export async function GenerateRandomAlias(
     return GenerateRandomAlias(db);
   }
   return randomAlias;
+}
+
+// ==================== User Management Functions ====================
+
+/**
+ * Create a new user account
+ * First user created will be admin
+ */
+export async function createUser(
+  db: DrizzleD1Database<typeof schema>,
+  username: string,
+  password: string
+): Promise<{ success: boolean; message: string; isFirstUser?: boolean }> {
+  try {
+    // Check if user already exists
+    const existingUser = await db.query.users.findFirst({
+      where: eq(schema.users.username, username)
+    });
+
+    if (existingUser) {
+      return { success: false, message: "Username already exists" };
+    }
+
+    // Check if this is the first user
+    const allUsers = await db.query.users.findMany();
+    const isFirstUser = allUsers.length === 0;
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create user
+    await db.insert(schema.users).values({
+      username,
+      password: hashedPassword,
+      isAdmin: isFirstUser, // First user is admin
+    }).returning();
+
+    console.log(`User created: ${username}${isFirstUser ? ' (ADMIN)' : ''}`);
+    
+    return { 
+      success: true, 
+      message: isFirstUser 
+        ? "Account created successfully! You are the first user and have been granted admin privileges." 
+        : "Account created successfully!",
+      isFirstUser
+    };
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return { success: false, message: "Failed to create user" };
+  }
+}
+
+/**
+ * Get user by username
+ */
+export async function getUserByUsername(
+  db: DrizzleD1Database<typeof schema>,
+  username: string
+) {
+  try {
+    return await db.query.users.findFirst({
+      where: eq(schema.users.username, username)
+    });
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null;
+  }
+}
+
+/**
+ * Verify user credentials
+ */
+export async function verifyUser(
+  db: DrizzleD1Database<typeof schema>,
+  username: string,
+  password: string
+): Promise<{ success: boolean; user?: any; message?: string }> {
+  try {
+    const user = await getUserByUsername(db, username);
+    
+    if (!user) {
+      return { success: false, message: "Invalid username or password" };
+    }
+
+    const isValidPassword = await verifyPassword(user.password, password);
+    
+    if (!isValidPassword) {
+      return { success: false, message: "Invalid username or password" };
+    }
+
+    // Don't return password hash
+    const { password: _, ...userWithoutPassword } = user;
+    
+    return { success: true, user: userWithoutPassword };
+  } catch (error) {
+    console.error("Error verifying user:", error);
+    return { success: false, message: "Authentication failed" };
+  }
+}
+
+/**
+ * Get all links created by a user
+ */
+export async function getUserLinks(
+  db: DrizzleD1Database<typeof schema>,
+  userId: number
+) {
+  try {
+    return await db.query.links.findMany({
+      where: eq(schema.links.userId, userId),
+      orderBy: (links, { desc }) => [desc(links.createdAt)]
+    });
+  } catch (error) {
+    console.error("Error getting user links:", error);
+    return [];
+  }
+}
+
+/**
+ * Get all users (admin only)
+ */
+export async function getAllUsers(
+  db: DrizzleD1Database<typeof schema>
+) {
+  try {
+    const users = await db.query.users.findMany({
+      orderBy: (users, { asc }) => [asc(users.createdAt)]
+    });
+    
+    // Remove password hashes
+    return users.map(({ password, ...user }) => user);
+  } catch (error) {
+    console.error("Error getting all users:", error);
+    return [];
+  }
 }

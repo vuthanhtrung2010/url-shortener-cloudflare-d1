@@ -59,17 +59,6 @@ export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
       </head>
       <body>
         {children}
-        <div className="footer-container">
-          <div className="credit" id="credit">
-            Made by <a href="https://discord.gg/TR8k3MtjNZ">Vũ Thành Trung</a> |{" "}
-            <a href="https://github.com/vuthanhtrung2010/url-shortener">
-              Github
-            </a>
-          </div>
-          <div className="space-y-0">
-            <p>&copy; 2025 Trung - All Rights Reserved.</p>
-          </div>
-        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
