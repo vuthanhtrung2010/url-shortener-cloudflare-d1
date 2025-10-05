@@ -15,6 +15,13 @@
       "when": 1759593656308,
       "tag": "0001_watery_black_crow",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1759660389551,
+      "tag": "0002_sparkling_dracula",
+      "breakpoints": true
     }
   ]
 }

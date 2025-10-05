@@ -27,6 +27,7 @@ function getSecretKey(): Uint8Array {
 export interface JWTPayload {
   userId: number;
   username: string;
+  email: string;
   isAdmin: boolean;
 }
 
@@ -56,6 +57,7 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
     return {
       userId: payload.userId as number,
       username: payload.username as string,
+      email: payload.email as string,
       isAdmin: payload.isAdmin as boolean,
     };
   } catch (error) {

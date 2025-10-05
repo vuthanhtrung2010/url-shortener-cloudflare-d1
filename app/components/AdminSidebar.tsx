@@ -5,9 +5,11 @@ import {
   Link as LinkIcon, 
   LogOut, 
   Home,
-  BarChart3
+  BarChart3,
+  Users
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { getGravatarURL } from "~/lib/utils";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -62,10 +64,17 @@ const AppSidebar = () => {
       url: "/admin/analytics",
       icon: BarChart3,
     },
+    {
+      title: "Users",
+      url: "/admin/users",
+      icon: Users,
+      adminOnly: true,
+    },
   ];
 
   const displayName = user?.username || "User";
   const initials = displayName.charAt(0).toUpperCase();
+  const avatarUrl = user?.email ? getGravatarURL(user.email, 32) : "";
 
   return (
     <Sidebar collapsible="icon">
@@ -78,16 +87,22 @@ const AppSidebar = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                // Hide admin-only items from non-admin users
+                if (item.adminOnly && !user?.isAdmin) {
+                  return null;
+                }
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={location.pathname === item.url}>
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -100,7 +115,7 @@ const AppSidebar = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src="" alt={displayName} />
+                <AvatarImage src={avatarUrl} alt={displayName} />
                 <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -121,7 +136,7 @@ const AppSidebar = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src="" alt={displayName} />
+                  <AvatarImage src={avatarUrl} alt={displayName} />
                   <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

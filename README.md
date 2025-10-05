@@ -62,13 +62,6 @@ bun run typecheck  # Verify TypeScript
 bun run build      # Build for production
 bun run deploy     # Deploy to Cloudflare
 ```
-
-## 📖 Documentation
-
-- [Getting Started Guide](./GETTING_STARTED.md) - Detailed setup instructions
-- [Implementation Details](./IMPLEMENTATION_COMPLETE.md) - Technical documentation
-- [Auth Setup](./AUTH_SETUP.md) - Authentication configuration
-
 ## 🛠️ Tech Stack
 
 - **Frontend**: React Router v7, React, TypeScript

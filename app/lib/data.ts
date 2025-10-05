@@ -201,6 +201,7 @@ export async function GenerateRandomAlias(
 export async function createUser(
   db: DrizzleD1Database<typeof schema>,
   username: string,
+  email: string,
   password: string
 ): Promise<{ success: boolean; message: string; isFirstUser?: boolean }> {
   try {
@@ -213,6 +214,15 @@ export async function createUser(
       return { success: false, message: "Username already exists" };
     }
 
+    // Check if email already exists
+    const existingEmail = await db.query.users.findFirst({
+      where: eq(schema.users.email, email)
+    });
+
+    if (existingEmail) {
+      return { success: false, message: "Email already exists" };
+    }
+
     // Check if this is the first user
     const allUsers = await db.query.users.findMany();
     const isFirstUser = allUsers.length === 0;
@@ -223,6 +233,7 @@ export async function createUser(
     // Create user
     await db.insert(schema.users).values({
       username,
+      email,
       password: hashedPassword,
       isAdmin: isFirstUser, // First user is admin
     }).returning();
@@ -324,5 +335,160 @@ export async function getAllUsers(
   } catch (error) {
     console.error("Error getting all users:", error);
     return [];
+  }
+}
+
+/**
+ * Generate a secure random password
+ */
+function generateRandomPassword(): string {
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Create a user by admin (can set isAdmin flag, optional random password)
+ */
+export async function createUserByAdmin(
+  db: DrizzleD1Database<typeof schema>,
+  username: string,
+  email: string,
+  password: string | null,
+  isAdmin: boolean = false
+): Promise<{ success: boolean; message: string; generatedPassword?: string }> {
+  try {
+    // Check if user already exists
+    const existingUser = await db.query.users.findFirst({
+      where: eq(schema.users.username, username)
+    });
+
+    if (existingUser) {
+      return { success: false, message: "Username already exists" };
+    }
+
+    // Check if email already exists
+    const existingEmail = await db.query.users.findFirst({
+      where: eq(schema.users.email, email)
+    });
+
+    if (existingEmail) {
+      return { success: false, message: "Email already exists" };
+    }
+
+    // Generate random password if not provided
+    const actualPassword = password || generateRandomPassword();
+    const hashedPassword = await hashPassword(actualPassword);
+
+    // Create user
+    await db.insert(schema.users).values({
+      username,
+      email,
+      password: hashedPassword,
+      isAdmin,
+    }).returning();
+
+    console.log(`User created by admin: ${username}${isAdmin ? ' (ADMIN)' : ''}`);
+    
+    return { 
+      success: true, 
+      message: "User created successfully!",
+      generatedPassword: password ? undefined : actualPassword
+    };
+  } catch (error) {
+    console.error("Error creating user by admin:", error);
+    return { success: false, message: "Failed to create user" };
+  }
+}
+
+/**
+ * Update user information (admin only)
+ */
+export async function updateUser(
+  db: DrizzleD1Database<typeof schema>,
+  userId: number,
+  updates: {
+    username?: string;
+    email?: string;
+    password?: string;
+    isAdmin?: boolean;
+  }
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(schema.users.id, userId)
+    });
+
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+
+    // Check for username conflicts if updating username
+    if (updates.username && updates.username !== user.username) {
+      const existingUser = await db.query.users.findFirst({
+        where: eq(schema.users.username, updates.username)
+      });
+      if (existingUser) {
+        return { success: false, message: "Username already exists" };
+      }
+    }
+
+    // Check for email conflicts if updating email
+    if (updates.email && updates.email !== user.email) {
+      const existingEmail = await db.query.users.findFirst({
+        where: eq(schema.users.email, updates.email)
+      });
+      if (existingEmail) {
+        return { success: false, message: "Email already exists" };
+      }
+    }
+
+    // Prepare update object
+    const updateData: any = {};
+    if (updates.username) updateData.username = updates.username;
+    if (updates.email) updateData.email = updates.email;
+    if (updates.password) updateData.password = await hashPassword(updates.password);
+    if (updates.isAdmin !== undefined) updateData.isAdmin = updates.isAdmin;
+
+    // Update user
+    await db.update(schema.users)
+      .set(updateData)
+      .where(eq(schema.users.id, userId));
+
+    console.log(`User updated: ${userId}`);
+    
+    return { success: true, message: "User updated successfully!" };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return { success: false, message: "Failed to update user" };
+  }
+}
+
+/**
+ * Delete a user (admin only)
+ */
+export async function deleteUser(
+  db: DrizzleD1Database<typeof schema>,
+  userId: number
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(schema.users.id, userId)
+    });
+
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+
+    // Delete user
+    await db.delete(schema.users)
+      .where(eq(schema.users.id, userId));
+
+    console.log(`User deleted: ${userId}`);
+    
+    return { success: true, message: "User deleted successfully!" };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { success: false, message: "Failed to delete user" };
   }
 }

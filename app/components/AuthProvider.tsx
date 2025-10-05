@@ -4,6 +4,7 @@ import { useLoaderData, useRevalidator } from "react-router";
 interface User {
   userId: number;
   username: string;
+  email: string;
   isAdmin: boolean;
 }
 

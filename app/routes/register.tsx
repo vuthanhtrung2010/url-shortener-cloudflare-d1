@@ -54,9 +54,15 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 export async function action({ request, context }: Route.ActionArgs) {
   const formData = await request.formData();
   const username = formData.get("username") as string;
+  const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
   const turnstileToken = formData.get("cf-turnstile-response") as string;
+
+  // Validate email
+  if (!email || !email.includes("@")) {
+    return { error: "Please provide a valid email address" };
+  }
 
   // Validate passwords match
   if (password !== confirmPassword) {
@@ -75,7 +81,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 
   // Create user
-  const result = await createUser(context.db, username, password);
+  const result = await createUser(context.db, username, email, password);
 
   if (!result.success) {
     return { error: result.message };
@@ -92,6 +98,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const sessionHeader = await createSession({
     userId: user.id,
     username: user.username,
+    email: user.email,
     isAdmin: user.isAdmin,
   });
 
@@ -150,6 +157,17 @@ export default function Register() {
                     name="username"
                     type="text"
                     placeholder="Choose a username"
+                    required
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="your@email.com"
                     required
                   />
                 </div>

@@ -16,6 +16,7 @@ export default [
     route("admin", "routes/admin.tsx"),
     route("admin/links", "routes/admin.links.tsx"),
     route("admin/analytics", "routes/admin.analytics.tsx"),
+    route("admin/users", "routes/admin.users.tsx"),
   ]),
   
   // API routes

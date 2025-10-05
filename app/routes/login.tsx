@@ -49,7 +49,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   // Verify credentials
   const result = await verifyUser(context.db, username, password);
 
-  if (!result.success) {
+  if (!result.success || !result.user) {
     return {
       error: result.message || "Invalid username or password",
     };
@@ -59,6 +59,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const sessionHeader = await createSession({
     userId: result.user.id,
     username: result.user.username,
+    email: result.user.email,
     isAdmin: result.user.isAdmin,
   });
 
