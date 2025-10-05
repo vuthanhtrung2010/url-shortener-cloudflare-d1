@@ -120,8 +120,9 @@ export async function destroySession(request: Request): Promise<string> {
 /**
  * Require authentication middleware
  * Returns user or throws redirect to login
+ * Validates that the user still exists in the database
  */
-export async function requireAuth(request: Request): Promise<JWTPayload> {
+export async function requireAuth(request: Request, db?: any): Promise<JWTPayload> {
   const user = await getUserFromSession(request);
   
   if (!user) {
@@ -133,14 +134,32 @@ export async function requireAuth(request: Request): Promise<JWTPayload> {
     });
   }
   
+  // If database is provided, verify user still exists
+  if (db) {
+    const dbUser = await db.query.users.findFirst({
+      where: (users: any, { eq }: any) => eq(users.id, user.userId)
+    });
+    
+    if (!dbUser) {
+      // User was deleted, destroy session and redirect to login
+      throw new Response(null, {
+        status: 302,
+        headers: {
+          Location: '/login',
+          'Set-Cookie': await sessionCookie.serialize('', { maxAge: 0 }),
+        },
+      });
+    }
+  }
+  
   return user;
 }
 
 /**
  * Require admin authentication
  */
-export async function requireAdmin(request: Request): Promise<JWTPayload> {
-  const user = await requireAuth(request);
+export async function requireAdmin(request: Request, db?: any): Promise<JWTPayload> {
+  const user = await requireAuth(request, db);
   
   if (!user.isAdmin) {
     throw new Response('Forbidden: Admin access required', { status: 403 });

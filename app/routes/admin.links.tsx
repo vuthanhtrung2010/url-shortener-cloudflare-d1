@@ -30,7 +30,7 @@ import { eq } from "drizzle-orm";
 import * as schema from "../../database/schema";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  const user = await requireAuth(request);
+  const user = await requireAuth(request, context.db);
   
   let links;
   if (user.isAdmin) {
@@ -51,7 +51,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const user = await requireAuth(request);
+  const user = await requireAuth(request, context.db);
   const formData = await request.formData();
   const intent = formData.get("intent");
 

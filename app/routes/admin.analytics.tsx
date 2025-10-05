@@ -14,7 +14,7 @@ import {
 import { BarChart3, TrendingUp, Link2 } from "lucide-react";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  const user = await requireAuth(request);
+  const user = await requireAuth(request, context.db);
   
   let links;
   if (user.isAdmin) {

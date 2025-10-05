@@ -6,8 +6,8 @@ import { AuthProvider } from "~/components/AuthProvider";
 import { AdminSidebar } from "~/components/AdminSidebar";
 import { TooltipProvider } from "~/components/ui/tooltip";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const user = await requireAuth(request);
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const user = await requireAuth(request, context.db);
   
   return {
     user,

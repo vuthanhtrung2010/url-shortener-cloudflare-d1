@@ -36,7 +36,7 @@ import { Badge } from "~/components/ui/badge";
 import { UserPlus, Pencil, Trash2, Shield, User, AlertCircle, CheckCircle, Key } from "lucide-react";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  const user = await requireAuth(request);
+  const user = await requireAuth(request, context.db);
 
   if (!user.isAdmin) {
     throw new Response("Unauthorized", { status: 403 });
@@ -48,7 +48,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const user = await requireAuth(request);
+  const user = await requireAuth(request, context.db);
 
   if (!user.isAdmin) {
     throw new Response("Unauthorized", { status: 403 });
