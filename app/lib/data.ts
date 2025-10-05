@@ -464,7 +464,10 @@ export async function updateUser(
     const updateData: any = {};
     if (updates.username) updateData.username = updates.username;
     if (updates.email) updateData.email = updates.email;
-    if (updates.password) updateData.password = await hashPassword(updates.password);
+    if (updates.password) {
+      updateData.password = await hashPassword(updates.password);
+      updateData.passwordChangedAt = new Date(); // Track password change time
+    }
     if (updates.isAdmin !== undefined) updateData.isAdmin = updates.isAdmin;
 
     // Update user
@@ -472,7 +475,7 @@ export async function updateUser(
       .set(updateData)
       .where(eq(schema.users.id, userId));
 
-    console.log(`User updated: ${userId}`);
+    console.log(`User updated: ${userId}${updates.password ? ' (password changed)' : ''}`);
     
     return { success: true, message: "User updated successfully!" };
   } catch (error) {

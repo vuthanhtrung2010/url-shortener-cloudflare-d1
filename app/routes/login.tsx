@@ -61,6 +61,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     username: result.user.username,
     email: result.user.email,
     isAdmin: result.user.isAdmin,
+    passwordChangedAt: result.user.passwordChangedAt ? new Date(result.user.passwordChangedAt).getTime() : undefined,
   });
 
   return redirect("/admin", {

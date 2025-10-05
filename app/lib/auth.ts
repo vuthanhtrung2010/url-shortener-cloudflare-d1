@@ -29,6 +29,7 @@ export interface JWTPayload {
   username: string;
   email: string;
   isAdmin: boolean;
+  passwordChangedAt?: number; // Timestamp to invalidate sessions on password change
 }
 
 /**
@@ -59,6 +60,7 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
       username: payload.username as string,
       email: payload.email as string,
       isAdmin: payload.isAdmin as boolean,
+      passwordChangedAt: payload.passwordChangedAt as number | undefined,
     };
   } catch (error) {
     console.error('Token verification failed:', error);
@@ -134,7 +136,7 @@ export async function requireAuth(request: Request, db?: any): Promise<JWTPayloa
     });
   }
   
-  // If database is provided, verify user still exists
+  // If database is provided, verify user still exists and password hasn't changed
   if (db) {
     const dbUser = await db.query.users.findFirst({
       where: (users: any, { eq }: any) => eq(users.id, user.userId)
@@ -149,6 +151,23 @@ export async function requireAuth(request: Request, db?: any): Promise<JWTPayloa
           'Set-Cookie': await sessionCookie.serialize('', { maxAge: 0 }),
         },
       });
+    }
+    
+    // Check if password was changed after the token was issued
+    if (dbUser.passwordChangedAt) {
+      const tokenPasswordTime = user.passwordChangedAt || 0;
+      const dbPasswordTime = new Date(dbUser.passwordChangedAt).getTime();
+      
+      if (dbPasswordTime > tokenPasswordTime) {
+        // Password was changed after token was issued, invalidate session
+        throw new Response(null, {
+          status: 302,
+          headers: {
+            Location: '/login',
+            'Set-Cookie': await sessionCookie.serialize('', { maxAge: 0 }),
+          },
+        });
+      }
     }
   }
   

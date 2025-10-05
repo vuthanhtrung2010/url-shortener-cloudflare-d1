@@ -100,6 +100,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     username: user.username,
     email: user.email,
     isAdmin: user.isAdmin,
+    passwordChangedAt: user.passwordChangedAt ? new Date(user.passwordChangedAt).getTime() : undefined,
   });
 
   return redirect("/admin/links", {

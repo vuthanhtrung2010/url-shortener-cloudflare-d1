@@ -6,6 +6,7 @@ export const users = sqliteTable("users", {
   email: text().notNull().unique(),
   password: text().notNull(), // bcrypt hash
   isAdmin: integer({ mode: 'boolean' }).notNull().default(false),
+  passwordChangedAt: integer({ mode: 'timestamp' }),
   createdAt: integer({ mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 });
 
